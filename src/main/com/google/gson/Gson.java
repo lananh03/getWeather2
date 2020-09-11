@@ -1,6 +1,7 @@
 package com.google.gson;
 
 import java.lang.reflect.Type;
+import java.util.Map;
 
 import i5.las2peer.services.getWeatherService.CurrentWeather;
 import i5.las2peer.services.getWeatherService.Main;
@@ -9,7 +10,7 @@ import i5.las2peer.services.getWeatherService.Weather;
 public class Gson {
 
 
-	public CurrentWeather fromJson(String str, Type type) {
+	public Map<String, Object> fromJson(String str, Type type) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -1,20 +1,18 @@
 package i5.las2peer.services.getWeatherService;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import i5.las2peer.restMapper.RESTService;
 import i5.las2peer.restMapper.annotations.ServicePath;
@@ -56,18 +54,9 @@ import io.swagger.annotations.SwaggerDefinition;
 @ServicePath("weather")
 // TODO Your own service class
 public class GetWeatherMainClass extends RESTService {
-
-	
-	private static final String REST_URI = "https://api.openweathermap.org";
-	private static final String APPID = "1b2b3a82a8e633366caef05c1f70bcb2";
-	private Client client;
-	private WebTarget webTarget;
 	
 	public GetWeatherMainClass() {
-		
-	}
-	public GetWeatherMainClass(String uri) {
-		
+
 	}
 
 	/**
@@ -90,84 +79,41 @@ public class GetWeatherMainClass extends RESTService {
 			value = "weather",
 			notes = "Return current weather of Aachen")
 	
-	/**public static Map<String,Object> jsonToMap(String str){
-	    Map<String,Object> map = new Gson().fromJson(str,new TypeToken<HashMap<String,Object>> () {
-			private static final long serialVersionUID = 1L;}.getType());
-	    return map;
-	}
-	**/
-	public void getWeather(@PathParam("location") String location) {
+	public Response getWeather(@PathParam("location") String location) {
 				
-		  /**final String REST_URI = "https://api.openweathermap.org";
 		  String API_KEY = "347e72f54a7cde54465418abd431fcf0";
 	      String urlString = "http://api.openweathermap.org/data/2.5/weather?q=" + location + "&appid=" + API_KEY;
+	      String output = null;
+	      
+	      try {
 
-	      try{
+	  		URL url = new URL(urlString);
+	  		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+	  		conn.setRequestMethod("GET");
+	  		conn.setRequestProperty("Accept", "application/json");
 
-	          StringBuilder result = new StringBuilder();
-	          URL url = new URL(urlString);
-	          HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-	          BufferedReader rd = new BufferedReader(new InputStreamReader (conn.getInputStream()));
-	          String line;
-	          while ((line = rd.readLine()) != null){
-	              //PrintStream result = null;
-				result.append(line);
-	          } 
-	          rd.close();
-	          System.out.println(result);
-/**
-	          Map<String, Object> respMap = jsonToMap (result.toString());
-	          Map<String, Object> mainMap = jsonToMap (((HashMap<String, Object>) respMap).get("main").toString());
+	  		BufferedReader br = new BufferedReader(new InputStreamReader(
+	  			(conn.getInputStream())));
 
-	          System.out.println("Current Temperature: " + ((HashMap<String,Object>) mainMap).get("temp")  );
-	          **/
-	      /**}catch (IOException e){
-	          System.out.println(e.getMessage());
-	      }**/
-	       //HashMap<String, Object> mainMap = null;
-		// create gson object
-		client = ClientBuilder.newClient();
-		webTarget = client.target("https://api.openweathermap.org");
-		System.out.println(webTarget.toString());
-		WebTarget target = webTarget.path("data").path("2.5").path("weather").queryParam("q", location).queryParam("units","metric").queryParam("APPID", APPID);
-		// Prepare HTTP GET request 
-		Builder builder = target.request();
-		// define accepted media types
-		builder.accept(MediaType.APPLICATION_JSON);
-		Response response = builder.get();
-		
-	        String body = response.readEntity(String.class);
-	        
-			System.out.println(body);
-			
-	  		Gson gsonObj = new Gson();
-	  		CurrentWeather currWeather1 = gsonObj.fromJson(body, CurrentWeather.class);
-			Gson gsonObj2 = ((GsonBuilder) new GsonBuilder().setPrettyPrinting()).create();
-			System.out.println(gsonObj2.toJson(currWeather1.getWeather().get(0)));
-			System.out.println(gsonObj2.toJson(currWeather1.getMain()));
-	    	}
-		
-		public static void main(String args[]) {
-			RestClient restclient = new RestClient(REST_URI);
-			if(args.length == 0)
-				System.out.println("No arguments were given");
-			else {
-				if((args[0].equals("-currentWeather") || args[0].equals("-weatherForecast")) && args.length != 2)
-					System.out.println("Missing arguments");
-				else if(args[0].equals("-currentWeather"))
-					restclient.getCurrentWeather(args[1]);
-				//else if(args[0].equals("-weatherForecast"))
-				//	restclient.getWeatherForecast(args[1]);
-			}
-		
-	  	   //String weather = gsonObj2.toJson(currWeather.getWeather());
-		  // @SuppressWarnings("null") **/
-		  /** String weather =("Current Temperature: " + ((HashMap<String,Object>) mainMap).get("temp"));
-		   String returnString = "{"//
-				+ "'location':'" + location + "',"
-				+ "'info':'" + weather + "'"//
-				+ "}";
-		return Response.ok().entity(returnString).build();**/
+	  		System.out.println("Output from Server .... \n");
+	  		while ((output = br.readLine()) != null) {
+	  			System.out.println(output);
+	  		}
+
+	  		
+	  		conn.disconnect();
+
+	  	  } catch (MalformedURLException e) {
+
+	  		e.printStackTrace();
+
+	  	  } catch (IOException e) {
+
+	  		e.printStackTrace();
+
+	  	  }
+
+		return Response.ok().entity(output).build();
 	}
 	
 	/**public Response getTemplate() {

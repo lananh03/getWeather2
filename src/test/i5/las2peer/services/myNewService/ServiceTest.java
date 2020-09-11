@@ -101,7 +101,7 @@ public class ServiceTest {
 				client.setLogin(testAgent.getIdentifier(), testPass);
 				
 				ClientResponse result = client.sendRequest("GET", mainPath + "Aachen", "");
-				//Assert.assertEquals(200, result.getHttpCode());
+				Assert.assertEquals(200, result.getHttpCode());
 				// YOUR RESULT VALUE HERE
 				System.out.println("Result of 'testGetWeather': " + result.getResponse().trim());
 			} catch (Exception e) {
