@@ -89,27 +89,23 @@ public class GetWeatherMainClass extends RESTService {
 	public Response getWeather(@PathParam("location") String location) {
 		  
 		  OkHttpClient client = new OkHttpClient();
-          //Gson gson = new Gson();
           Gson gson = new Gson();
 		  String API_KEY = "347e72f54a7cde54465418abd431fcf0";
 	      Request urlString = new Request.Builder().url("http://api.openweathermap.org/data/2.5/weather?q=" + location + "&appid=" + API_KEY).build();
 	      JsonResult data = null;
-	      //JsonResult[] data1 = null;
-	      //String output = null;
+	      String result = null;
 	      try {
 
 	    	okhttp3.Response response = client.newCall(urlString).execute();
-	        ResponseBody body = response.body();
-	        //System.out.println(body.string());
-	        data = gson.fromJson(body.string(), JsonResult.class);
-	        
-	        //System.out.println(data);
-	        //data = body.string();
+	        ResponseBody curWeather = response.body();
+	        data = gson.fromJson(curWeather.string(), JsonResult.class);
+	       
 	      } catch (Exception e) {
 	            e.printStackTrace();
 	  	  }
-	      //System.out.println(data);
-	      return Response.ok().entity(data.getCity().getName()).build();
+	      
+	      result = "City: " + data.getName() + ", Current temperature: " + data.getMain().getTemp() + "oC";
+	      return Response.ok().entity(result).build();
 		
 	}
 	
