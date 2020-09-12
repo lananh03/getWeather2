@@ -1,11 +1,6 @@
 package i5.las2peer.services.getWeatherService;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -24,6 +19,11 @@ import io.swagger.annotations.Contact;
 import io.swagger.annotations.Info;
 import io.swagger.annotations.License;
 import io.swagger.annotations.SwaggerDefinition;
+
+import com.google.gson.Gson;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.ResponseBody;
 
 // TODO Describe your own service
 /**
@@ -55,6 +55,8 @@ import io.swagger.annotations.SwaggerDefinition;
 // TODO Your own service class
 public class GetWeatherMainClass extends RESTService {
 	
+	//private JsonResult data;
+	
 	public GetWeatherMainClass() {
 
 	}
@@ -63,7 +65,7 @@ public class GetWeatherMainClass extends RESTService {
 	 * Template of a get function.
 	 * @return Returns an HTTP response with the username as string content.
 	 */
-	@SuppressWarnings({ })
+	
 	@GET
 	@Path("{location}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -81,13 +83,19 @@ public class GetWeatherMainClass extends RESTService {
 	
 	public Response getWeather(@PathParam("location") String location) {
 				
+		  //String city;
+		  //String temp;
+		  
+		  OkHttpClient client = new OkHttpClient();
+          //Gson gson = new Gson();
+          Gson gson = new Gson();
 		  String API_KEY = "347e72f54a7cde54465418abd431fcf0";
-	      String urlString = "http://api.openweathermap.org/data/2.5/weather?q=" + location + "&appid=" + API_KEY;
-	      String output = null;
-	      
+	      Request urlString = new Request.Builder().url("http://api.openweathermap.org/data/2.5/weather?q=" + location + "&appid=" + API_KEY).build();
+	      JsonResult data = null;
+	      //String output = null;
 	      try {
 
-	  		URL url = new URL(urlString);
+	  		/**URL url = new URL(urlString);
 	  		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 	  		conn.setRequestMethod("GET");
 	  		conn.setRequestProperty("Accept", "application/json");
@@ -97,10 +105,26 @@ public class GetWeatherMainClass extends RESTService {
 
 	  		System.out.println("Output from Server .... \n");
 	  		while ((output = br.readLine()) != null) {
-	  			System.out.println(output);
+	  			System.out.println(output);**/
+	    	okhttp3.Response response = client.newCall(urlString).execute();
+	        ResponseBody body = response.body();
+	        //System.out.println(body.string());
+	        data = gson.fromJson(body.string(), JsonResult.class);
+	        
+	        } catch (Exception e) {
+	            e.printStackTrace();
 	  		}
-
-	  		
+	        
+	        String output = data.getCity().getName().toString() + data.getMain().getTemp().toString();
+	      	System.out.println(output);
+	      	
+	  		/**Map results = (Map) JSON.deserializeUntyped(((JSON) response).getBody());
+			//city = String.valueOf(results.get("name").toString());			   
+			Map mainResults = (Map)(results.get("main"));
+			temp = String.valueOf(mainResults.get("temp"));
+			
+	        System.out.println("Current Temperature: " + temp);
+	        
 	  		conn.disconnect();
 
 	  	  } catch (MalformedURLException e) {
@@ -111,8 +135,8 @@ public class GetWeatherMainClass extends RESTService {
 
 	  		e.printStackTrace();
 
-	  	  }
-
+	  	  } **/
+	      
 		return Response.ok().entity(output).build();
 	}
 	
@@ -143,6 +167,7 @@ public class GetWeatherMainClass extends RESTService {
 		returnString += "Input " + myInput;
 		return Response.ok().entity(returnString).build();
 	}
+
 
 	// TODO your own service methods, e. g. for RMI
 
