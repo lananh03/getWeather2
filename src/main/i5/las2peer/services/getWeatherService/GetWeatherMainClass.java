@@ -82,9 +82,6 @@ public class GetWeatherMainClass extends RESTService {
 			notes = "Return current weather of Aachen")
 	
 	public Response getWeather(@PathParam("location") String location) {
-				
-		  //String city;
-		  //String temp;
 		  
 		  OkHttpClient client = new OkHttpClient();
           //Gson gson = new Gson();
@@ -95,49 +92,17 @@ public class GetWeatherMainClass extends RESTService {
 	      //String output = null;
 	      try {
 
-	  		/**URL url = new URL(urlString);
-	  		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-	  		conn.setRequestMethod("GET");
-	  		conn.setRequestProperty("Accept", "application/json");
-
-	  		BufferedReader br = new BufferedReader(new InputStreamReader(
-	  			(conn.getInputStream())));
-
-	  		System.out.println("Output from Server .... \n");
-	  		while ((output = br.readLine()) != null) {
-	  			System.out.println(output);**/
 	    	okhttp3.Response response = client.newCall(urlString).execute();
 	        ResponseBody body = response.body();
 	        //System.out.println(body.string());
 	        data = gson.fromJson(body.string(), JsonResult.class);
 	        
-	        } catch (Exception e) {
+	      } catch (Exception e) {
 	            e.printStackTrace();
-	  		}
+	  	  }
 	        
-	        String output = data.getCity().getName().toString() + data.getMain().getTemp().toString();
-	      	System.out.println(output);
-	      	
-	  		/**Map results = (Map) JSON.deserializeUntyped(((JSON) response).getBody());
-			//city = String.valueOf(results.get("name").toString());			   
-			Map mainResults = (Map)(results.get("main"));
-			temp = String.valueOf(mainResults.get("temp"));
-			
-	        System.out.println("Current Temperature: " + temp);
-	        
-	  		conn.disconnect();
-
-	  	  } catch (MalformedURLException e) {
-
-	  		e.printStackTrace();
-
-	  	  } catch (IOException e) {
-
-	  		e.printStackTrace();
-
-	  	  } **/
-	      
-		return Response.ok().entity(output).build();
+	      return Response.ok().entity(data).build();
+		
 	}
 	
 	/**public Response getTemplate() {
