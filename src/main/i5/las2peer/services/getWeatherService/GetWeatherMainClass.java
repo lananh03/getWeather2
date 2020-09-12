@@ -104,12 +104,7 @@ public class GetWeatherMainClass extends RESTService {
 		
 	}
 	
-	/**public Response getTemplate() {
-		UserAgent userAgent = (UserAgent) Context.getCurrent().getMainAgent();
-		String name = userAgent.getLoginName();
-		return Response.ok().entity(name).build(); 
-	} */
-
+	
 	/**
 	 * Template of a post function.
 	 * 
