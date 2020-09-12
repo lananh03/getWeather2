@@ -9,6 +9,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import java.util.Collection;
+import java.util.List;
+
 import i5.las2peer.restMapper.RESTService;
 import i5.las2peer.restMapper.annotations.ServicePath;
 import io.swagger.annotations.Api;
@@ -21,6 +24,8 @@ import io.swagger.annotations.License;
 import io.swagger.annotations.SwaggerDefinition;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.ResponseBody;
@@ -89,6 +94,7 @@ public class GetWeatherMainClass extends RESTService {
 		  String API_KEY = "347e72f54a7cde54465418abd431fcf0";
 	      Request urlString = new Request.Builder().url("http://api.openweathermap.org/data/2.5/weather?q=" + location + "&appid=" + API_KEY).build();
 	      JsonResult data = null;
+	      //JsonResult[] data1 = null;
 	      //String output = null;
 	      try {
 
@@ -97,11 +103,13 @@ public class GetWeatherMainClass extends RESTService {
 	        //System.out.println(body.string());
 	        data = gson.fromJson(body.string(), JsonResult.class);
 	        
+	        //System.out.println(data);
+	        //data = body.string();
 	      } catch (Exception e) {
 	            e.printStackTrace();
 	  	  }
-	        
-	      return Response.ok().entity(data).build();
+	      //System.out.println(data);
+	      return Response.ok().entity(data.getCity().getName()).build();
 		
 	}
 	
