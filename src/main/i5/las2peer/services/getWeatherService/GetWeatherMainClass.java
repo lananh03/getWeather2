@@ -94,7 +94,7 @@ public class GetWeatherMainClass extends RESTService {
 	    	okhttp3.Response response = client.newCall(urlString).execute();
 	        ResponseBody curWeather = response.body();
 	        data = gson.fromJson(curWeather.string(), JsonResult.class);
-	       
+	       result = curWeather.string();
 	      } catch (Exception e) {
 	            e.printStackTrace();
 	  	  }
