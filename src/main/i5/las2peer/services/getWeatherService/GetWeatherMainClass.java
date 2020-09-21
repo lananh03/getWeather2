@@ -129,15 +129,12 @@ public class GetWeatherMainClass extends RESTService {
 			//load template
 			Scanner scanner;
 			
-			//scanner all html's contents
 			scanner = new Scanner(new File("./frontEnd/index.html"));
 			String html = "";
 			
-			//catch the first character of html's content
 			html = scanner.useDelimiter("\\A").next();
 			scanner.close();
 			
-			//add info of city into html
 			html = fillPlaceHolder(html, "NAME_CITY", "~");
 			html = fillPlaceHolder(html, "TEMP", "~");
 			
@@ -165,7 +162,7 @@ public class GetWeatherMainClass extends RESTService {
 			String tag = m.group().substring(2, m.group().length() -1 );
 			adaptedform = adaptedform.replaceAll("\\$\\{" + tag +"\\}", value);
 		}
-		System.out.println("hello");
+
 		return adaptedform;
 	}
 	
