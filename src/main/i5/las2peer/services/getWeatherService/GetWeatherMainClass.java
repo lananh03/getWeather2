@@ -108,15 +108,14 @@ public class GetWeatherMainClass extends RESTService {
 	        
 	        html = fillPlaceHolder(html, "NAME_CITY", data.getName());
 	        int newTem = (int)(data.getMain().getTemp() - 273.15);
-	        html = fillPlaceHolder(html, "TEM", String.valueOf(newTem));
-	        
+	        html = fillPlaceHolder(html, "TEMP", String.valueOf(newTem));
+	    
 	        return Response.status(Status.OK).entity(html).build();
 	       
 	      } catch (Exception e) {
 	            e.printStackTrace();
 	            return internalError(onAction);
 	  	  }
-	      
 	}
 	
 	@GET
@@ -140,7 +139,7 @@ public class GetWeatherMainClass extends RESTService {
 			
 			//add info of city into html
 			html = fillPlaceHolder(html, "NAME_CITY", "~");
-			html = fillPlaceHolder(html, "TEM", "~");
+			html = fillPlaceHolder(html, "TEMP", "~");
 			
 			return Response.status(Status.OK).entity(html).build();
 			
@@ -166,7 +165,7 @@ public class GetWeatherMainClass extends RESTService {
 			String tag = m.group().substring(2, m.group().length() -1 );
 			adaptedform = adaptedform.replaceAll("\\$\\{" + tag +"\\}", value);
 		}
-		
+		System.out.println("hello");
 		return adaptedform;
 	}
 	
