@@ -17,6 +17,8 @@
         <dependency org="org.jacoco" name="org.jacoco.ant" rev="0.8.5" conf="platform->default" />
         <!-- Gson -->
         <dependency org="com.google.code.gson" name="gson" rev="2.8.5" />
+        <!-- Javax -->
+        <dependency org="javax.ws.rs" name="javax.ws.rs-api" rev="2.0.1" />
 
         <!-- service dependencies -->
         <!-- Add service dependencies here -->

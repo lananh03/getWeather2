@@ -1,6 +1,11 @@
 package i5.las2peer.services.getWeatherService;
 
+import java.io.File;
 import java.net.HttpURLConnection;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -8,6 +13,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import i5.las2peer.restMapper.RESTService;
 import i5.las2peer.restMapper.annotations.ServicePath;
@@ -67,8 +73,8 @@ public class GetWeatherMainClass extends RESTService {
 	 */
 	
 	@GET
-	@Path("{location}")
-	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/getTemp/{location}")
+	@Produces(MediaType.TEXT_HTML)
 	
 	@ApiResponses(
 			value = { @ApiResponse(
@@ -81,53 +87,87 @@ public class GetWeatherMainClass extends RESTService {
 			value = "weather",
 			notes = "Return current weather of Aachen")
 	
-	public Response getWeather(@PathParam("location") String location) {
+	public Response getWeather(String location) {
 		  
 		  OkHttpClient client = new OkHttpClient();
           Gson gson = new Gson();
 		  String API_KEY = "347e72f54a7cde54465418abd431fcf0";
 	      Request urlString = new Request.Builder().url("http://api.openweathermap.org/data/2.5/weather?q=" + location + "&appid=" + API_KEY).build();
 	      JsonResult data = null;
-	      String result = null;
+	      String onAction = "Retrieving HTML";
 	      try {
 
 	    	okhttp3.Response response = client.newCall(urlString).execute();
 	        ResponseBody curWeather = response.body();
 	        data = gson.fromJson(curWeather.string(), JsonResult.class);
-	       result = curWeather.string();
+	        Scanner scanner;
+	        scanner = new Scanner(new File("./frontEnd/index.html"));
+	        String html = "";
+	        html = scanner.useDelimiter("\\A").next();
+	        scanner.close();
+	        
+	        html = fillPlaceHolder(html, "NAME_CITY", data.getName());
+	        int newTem = (int)(data.getMain().getTemp() - 273.15);
+	        html = fillPlaceHolder(html, "TEM", String.valueOf(newTem));
+	        
+	        return Response.status(Status.OK).entity(html).build();
+	       
 	      } catch (Exception e) {
 	            e.printStackTrace();
+	            return internalError(onAction);
 	  	  }
 	      
-	      result = "City: " + data.getName() + ", Current temperature: " + data.getMain().getTemp() + "K";
-	      return Response.ok().entity(result).build();
+	}
+	
+	@GET
+	@Path("/")
+	@Produces(MediaType.TEXT_HTML)
+	
+	public Response getWeatherTemplate() throws Exception{
+		
+		String onAction = "Retrieving HTML";
+		try {
+			//load template
+			Scanner scanner;
+			
+			//scanner all html's contents
+			scanner = new Scanner(new File("./frontEnd/index.html"));
+			String html = "";
+			
+			//catch the first character of html's content
+			html = scanner.useDelimiter("\\A").next();
+			scanner.close();
+			
+			//add info of city into html
+			html = fillPlaceHolder(html, "NAME_CITY", "~");
+			html = fillPlaceHolder(html, "TEM", "~");
+			
+			return Response.status(Status.OK).entity(html).build();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return internalError(onAction);
+		}
+	}
+	
+	private Response internalError(String onAction) {
+		return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Internal error while " + onAction)
+				.type(MediaType.TEXT_PLAIN).build();
 		
 	}
 	
-	
-	/**
-	 * Template of a post function.
-	 * 
-	 * @param myInput The post input the user will provide.
-	 * @return Returns an HTTP response with plain text string content derived from the path input param.
-	 */
-	@POST
-	@Path("/post/{input}")
-	@Produces(MediaType.TEXT_PLAIN)
-	@ApiResponses(
-			value = { @ApiResponse(
-					code = HttpURLConnection.HTTP_OK,
-					message = "REPLACE THIS WITH YOUR OK MESSAGE") })
-	@ApiOperation(
-			value = "REPLACE THIS WITH AN APPROPRIATE FUNCTION NAME",
-			notes = "Example method that returns a phrase containing the received input.")
-	public Response postTemplate(@PathParam("input") String myInput) {
-		String returnString = "";
-		returnString += "Input " + myInput;
-		return Response.ok().entity(returnString).build();
+	private String fillPlaceHolder(String data, String placeholder, String value) {
+		Pattern p = Pattern.compile("\\$\\{" + placeholder + "\\}");
+		Matcher m = p.matcher(data);
+		
+		String adaptedform = new String(data);
+		
+		while(m.find()) {
+			String tag = m.group().substring(2, m.group().length() -1 );
+			adaptedform = adaptedform.replaceAll("\\$\\{" + tag +"\\}", value);
+		}
+		
+		return adaptedform;
 	}
-
-
-	// TODO your own service methods, e. g. for RMI
-
+	
 }
