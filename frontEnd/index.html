@@ -338,7 +338,7 @@
 					$("#searchRs").click(function (e) { 
 						e.preventDefault();
 						let name = $("#inputName").val();
-						let oldName = $(".weather-details h6").html();
+						//let oldName = $(".weather-details h6").html();
 						$("#inputName").val("");
 						getNewRs(name).then(rs=>{
 							let temp = Math.round((rs.main.temp - 273.15));

@@ -76,18 +76,8 @@ public class GetWeatherMainClass extends RESTService {
 	@Path("/getTemp/{location}")
 	@Produces(MediaType.TEXT_HTML)
 	
-	@ApiResponses(
-			value = { @ApiResponse(
-					code = HttpURLConnection.HTTP_NOT_FOUND,
-					message = "Connection lost"),//
-					@ApiResponse(
-							code = HttpURLConnection.HTTP_OK,
-							message = "Success|OK")})
-	@ApiOperation(
-			value = "weather",
-			notes = "Return current weather of Aachen")
 	
-	public Response getWeather(String location) {
+	public Response getWeather(@PathParam("location")String location) {
 		  
 		  OkHttpClient client = new OkHttpClient();
           Gson gson = new Gson();
